@@ -46,6 +46,50 @@ void setDistances(std::vector<City>& cities)
 	}
 }
 
+
+void Cross_over(const Path& PathA, const Path& PathB, const std::vector<Cities>& Cities)
+{
+	int Neighbors[PATH_SIZE * 4];
+	unsigned int A_current_city = PathA.Get_IDCity_at(0);
+	unsigned int B_current_city = PathA.Get_IDCity_at(0);
+	unsigned int A_current_right_city = PathA.Get_IDCity_at(1);
+	unsigned int A_current_left_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
+	unsigned int B_current_right_city = PathB.Get_IDCity_at(1);
+	unsigned int B_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 1);
+	Neighbors[A_current_city] = A_current_right_city;
+	Neighbors[A_current_city] = A_current_left_city;
+	Neighbors[B_current_city] = B_current_right_city;
+	Neighbors[B_current_city] = B_current_left_city;
+	for (int i = 1; i < PATH_SIZE - 1; i++)
+	{
+		A_current_city = PathA.Get_IDCity_at(i);
+		B_current_city = PathA.Get_IDCity_at(i);
+		A_current_right_city = PathA.Get_IDCity_at(i + 1);
+		A_current_left_city = PathA.Get_IDCity_at(i - 1);
+		B_current_right_city = PathB.Get_IDCity_at(i + 1);
+		B_current_left_city = PathB.Get_IDCity_at(i - 1);
+		Neighbors[A_current_city * 4] = A_current_right_city;
+		Neighbors[A_current_city * 4 + 1] = A_current_left_city;
+		Neighbors[B_current_city * 4 + 2] = B_current_right_city;
+		Neighbors[B_current_city * 4 + 3] = B_current_left_city;
+	}
+	A_current_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
+	B_current_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
+	A_current_right_city = PathA.Get_IDCity_at(0);
+	A_current_left_city = PathA.Get_IDCity_at(PATH_SIZE - 2);
+	B_current_right_city = PathB.Get_IDCity_at(0);
+	B_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 2);
+	Neighbors[(PATH_SIZE - 1) * 4] = A_current_right_city;
+	Neighbors[(PATH_SIZE - 1) * 4 + 1] = A_current_left_city;
+	Neighbors[(PATH_SIZE - 1) * 4 + 2] = B_current_right_city;
+	Neighbors[(PATH_SIZE - 1) * 4 + 3] = B_current_left_city;
+}
+
+void Mutatation(const Path & PathA)
+{
+	
+}
+
 int main()
 {
 	

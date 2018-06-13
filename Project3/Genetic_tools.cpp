@@ -14,19 +14,7 @@
 #include <random>
 #include <stdlib.h>
 #include <time.h>
+#include "Genetic_tools.h"
 typedef std::vector<City> Cities;
 
 
-Path Cross_over(const Path & PathA, const Path & PathB ,const std::vector<Cities>& Cities )
-{
-	for (int i =0 ; i<PATH_SIZE;i++)
-	{
-		std::vector<int> A_Neighbors;
-		std::vector<int> B_Neighbors;	
-		int next_city_ID = PathA.m_Path.at(i + 1).GetID();
-		City next_city = Cities.at(next_city_ID);
-
-
-
-	}
-}
