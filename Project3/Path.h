@@ -14,6 +14,9 @@ public:
 	Path(const std::vector<City>& cities);
 	const void SetLenght();
 	const float GetLength() const;
-	friend Path Cross_over(const Path & PathA, const Path & PathB);
+	const std::vector<City> GetPath() const;
+	const unsigned int Get_IDCity_at(int index) const ;
+
 	
 };
+

@@ -5,6 +5,7 @@
 #include "Path.h"
 #include <random>
 #include "Defs.h"
+#include "City.h"
 
 Path::Path(const std::vector<City>& cities)
 	:m_Path(cities)
@@ -47,9 +48,22 @@ const float Path::GetLength() const
 	return m_Length;
 }
 
+const std::vector<City> Path::GetPath() const
+{
+	return m_Path;
+}
+
+const unsigned Path::Get_IDCity_at(int index) const
+{
+	return m_Path.at(index).GetID();
+}
+
+
 
 Path::Path()
 	: m_Length(0)
 {
 	m_Path.reserve(PATH_SIZE);
 }
+
+

@@ -1,5 +1,6 @@
 #pragma once
+#include <iostream>
 #include "Path.h"
+#include "City.h"
+#include <vector>
 
-Path Cross_over(const Path& PathA, const Path& PathB);
-Path Mutate(const Path& PathA);
