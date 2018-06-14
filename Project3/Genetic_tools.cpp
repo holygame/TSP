@@ -15,6 +15,3 @@
 #include <stdlib.h>
 #include <time.h>
 #include "Genetic_tools.h"
-typedef std::vector<City> Cities;
-
-
