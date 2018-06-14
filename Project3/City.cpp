@@ -32,6 +32,7 @@ const int City::GetY() const
 const float City::GetDistanceTo(unsigned int index) const
 {
 	return m_Distances[index];
+	
 }
 
 const void City::updateDistances(const std::vector<City>& cities)
@@ -42,4 +43,9 @@ const void City::updateDistances(const std::vector<City>& cities)
 		m_Distances.emplace_back((float)round(sqrt(pow((m_X - city.GetX()), 2) + pow((m_Y - city.GetY()), 2))));
 		
 	}
+}
+
+const bool City::operator==(const City& other) const
+{
+	return this->m_Id == other.m_Id;
 }

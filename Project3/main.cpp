@@ -46,21 +46,30 @@ void setDistances(std::vector<City>& cities)
 	}
 }
 
-
-Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<Cities>& Cities)
+void Fill_Vector(std::vector<std::vector<int>>& neighbors , unsigned center , unsigned left , unsigned right)
 {
-	int neighbors[PATH_SIZE * 4];
-	unsigned int a_current_city = PathA.Get_IDCity_at(0);
-	unsigned int b_current_city = PathA.Get_IDCity_at(0);
-	unsigned int a_current_right_city = PathA.Get_IDCity_at(1);
-	unsigned int a_current_left_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
-	unsigned int b_current_right_city = PathB.Get_IDCity_at(1);
-	unsigned int b_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 1);
-	Neighbors[a_current_city] = a_current_right_city;
-	Neighbors[a_current_city] = a_current_left_city;
-	Neighbors[b_current_city] = b_current_right_city;
-	Neighbors[b_current_city] = b_current_left_city;
-	for (int i = 1 ; i < PATH_SIZE - 1; i++)
+	neighbors.at(center).emplace_back(right);
+	neighbors.at(center).emplace_back(left);
+}
+
+Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
+{
+	std::vector<std::vector<int>> neighbors;
+	neighbors.reserve(PATH_SIZE);
+	for (unsigned r = 0; r < PATH_SIZE; r++)
+	{
+		neighbors.at(r).reserve(4);
+	}
+	unsigned a_current_city = PathA.Get_IDCity_at(0);
+	unsigned b_current_city = PathA.Get_IDCity_at(0);
+	unsigned a_current_right_city = PathA.Get_IDCity_at(1);
+	unsigned a_current_left_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
+	unsigned b_current_right_city = PathB.Get_IDCity_at(1);
+	unsigned b_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 1);
+	Fill_Vector(neighbors, a_current_city, a_current_left_city, a_current_right_city);
+	Fill_Vector(neighbors, b_current_city, b_current_left_city, b_current_right_city);
+	
+	for (unsigned i = 1 ; i < PATH_SIZE - 1; i++)
 	{
 		a_current_city = PathA.Get_IDCity_at(i);
 		b_current_city = PathB.Get_IDCity_at(i);
@@ -68,10 +77,8 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<Cities>&
 		a_current_left_city = PathA.Get_IDCity_at(i - 1);
 		b_current_right_city = PathB.Get_IDCity_at(i + 1);
 		b_current_left_city = PathB.Get_IDCity_at(i - 1);
-		Neighbors[a_current_city * 4] = a_current_right_city;
-		Neighbors[a_current_city * 4 + 1] = a_current_left_city;
-		Neighbors[b_current_city * 4 + 2] = b_current_right_city;
-		Neighbors[b_current_city * 4 + 3] = b_current_left_city;
+		Fill_Vector(neighbors, a_current_city, a_current_left_city, a_current_right_city);
+		Fill_Vector(neighbors, b_current_city, b_current_left_city, b_current_right_city);
 	}
 	a_current_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
 	b_current_city = PathB.Get_IDCity_at(PATH_SIZE - 1);
@@ -79,25 +86,49 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<Cities>&
 	a_current_left_city = PathA.Get_IDCity_at(PATH_SIZE - 2);
 	b_current_right_city = PathB.Get_IDCity_at(0);
 	b_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 2);
-	Neighbors[(PATH_SIZE - 1) * 4] = a_current_right_city;
-	Neighbors[(PATH_SIZE - 1) * 4 + 1] = a_current_left_city;
-	Neighbors[(PATH_SIZE - 1) * 4 + 2] = b_current_right_city;
-	Neighbors[(PATH_SIZE - 1) * 4 + 3] = b_current_left_city;
+	Fill_Vector(neighbors, a_current_city, a_current_left_city, a_current_right_city);
+	Fill_Vector(neighbors, b_current_city, b_current_left_city, b_current_right_city);
 	unsigned int choosen = std::rand() % PATH_SIZE;
-	int min;
+	unsigned min;
 	Path child = Path();
 	for (int i = 0; i < PATH_SIZE; i++)
 	{
 		min = 5;
 		child.SetCityAt(i, Cities.at(choosen));
-		for (int j = 0; i < PATH_SIZE; i++)
+		for (int j = 0; i < PATH_SIZE; j++)
 		{
-		
+			for (auto& neighbor : neighbors)
+			{
+				std::remove(neighbor.begin(), neighbor.end(), choosen);
+				neighbor.shrink_to_fit();
+			}
+			for (auto& city_id : neighbors.at(choosen))
+			{
+				if (int size = neighbors.at(city_id).size() <= min)
+				{
+					min = size;
+					choosen = city_id;
+				}
+			}
+			if (neighbors.at(choosen).empty() == true)
+			{
+				for (int p = 0; i < PATH_SIZE; p++)
+				{
+					min = 5;
+					for (auto& city_id : neighbors.at(p))
+					{
+						if (std::find(child.GetPath().begin(), child.GetPath().end(), Cities.at(city_id)) == child.GetPath().end())
+						{
+							choosen = city_id;
+							min = neighbors.at(city_id).size();
+						}
+					}
+				}
+			}
+
 		}
-		
-
 	}
-
+	return child;
 }
 
 void Mutatation(const Path & PathA)
@@ -109,7 +140,6 @@ int main()
 {
 	
 	auto start = high_resolution_clock::now();
-
 	std::vector<City> Cities;
 	Cities.reserve(PATH_SIZE);
 	std::ifstream file("C:/Users/user/eil51.tsp");
@@ -124,6 +154,8 @@ int main()
 	}
 
 	Population p(Cities);
+	Population d(Cities);
+	Path test = Cross_over(p.GetBestPath(), d.GetBestPath() , Cities);
 	std::cout << "best generated path "<< p.GetBestPath().GetLength() << std::endl;
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop - start);

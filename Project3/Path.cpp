@@ -66,4 +66,9 @@ Path::Path()
 	m_Path.reserve(PATH_SIZE);
 }
 
+const void Path::SetCityAt(unsigned index, const City& city)
+{
+	m_Path.at(index) = city;
+}
+
 

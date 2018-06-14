@@ -16,7 +16,7 @@ public:
 	const float GetLength() const;
 	const std::vector<City> GetPath() const;
 	const unsigned int Get_IDCity_at(int index) const ;
-
+	const void SetCityAt(unsigned index, const City& city);
 	
 };
 

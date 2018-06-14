@@ -26,4 +26,5 @@ public:
 	const unsigned int GetID() const;
 	const float GetDistanceTo(unsigned int index) const;
 	const void updateDistances(const std::vector<City> &cities);
+	const bool operator==(const City& other) const;
 };
