@@ -11,6 +11,7 @@ private:
 public:
 
 	Path();
+	Path(const Path &t_path);
 	Path(const std::vector<City>& cities);
 	const void SetLenght();
 	const float GetLength() const;

@@ -28,3 +28,6 @@ public:
 	const void updateDistances(const std::vector<City> &cities);
 	const bool operator==(const City& other) const;
 };
+
+void setDistances(std::vector<City>& cities);
+void CitiesFromFile(std::ifstream& FTP, std::vector<City>& Out_Cities);

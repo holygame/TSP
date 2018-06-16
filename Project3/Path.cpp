@@ -1,5 +1,3 @@
-
-
 #include <algorithm>    // std::random_shuffle
 #include <vector>       // std::vector
 #include "Path.h"
@@ -7,6 +5,12 @@
 #include "Defs.h"
 #include "City.h"
 
+
+Path::Path(const Path &t_path)
+{
+	m_Path = t_path.GetPath();
+	m_Length = t_path.GetLength();
+}
 Path::Path(const std::vector<City>& cities)
 	:m_Path(cities)
  
@@ -63,7 +67,7 @@ const unsigned Path::Get_IDCity_at(int index) const
 Path::Path()
 	: m_Length(0)
 {
-	m_Path.reserve(PATH_SIZE);
+	m_Path.resize(PATH_SIZE);
 }
 
 const void Path::SetCityAt(unsigned index, const City& city)

@@ -1,5 +1,9 @@
 #include "City.h"
 #include "Defs.h"
+#include <array>
+#include <vector>
+#include <iostream>   
+#include <fstream>
 
 City::City()
 	:m_Id(0), m_X(0), m_Y(0)
@@ -48,4 +52,35 @@ const void City::updateDistances(const std::vector<City>& cities)
 const bool City::operator==(const City& other) const
 {
 	return this->m_Id == other.m_Id;
+}
+
+void CitiesFromFile(std::ifstream& FTP, std::vector<City>& Out_Cities)
+{
+	std::string line;
+	std::string token;
+	std::string delimiter = " ";
+	std::array<int, 3> temparray;
+	size_t n_line = 0;
+	while (std::getline(FTP, line))
+	{
+		size_t pos = 0;
+		size_t i = 0;
+		while (i<3)
+		{
+			pos = line.find(delimiter);
+			token = line.substr(0, pos);
+			temparray.at(i) = std::stoi(token);
+			i++;
+			line.erase(0, pos + delimiter.length());
+		}
+		Out_Cities.emplace_back(City(n_line++, temparray[1], temparray[2]));
+	}
+}
+
+void setDistances(std::vector<City>& cities)
+{
+	for (int i = 0; i < PATH_SIZE; i++)
+	{
+		cities.at(i).updateDistances(cities);
+	}
 }
