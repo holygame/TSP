@@ -37,9 +37,10 @@ int main()
 	Population p(Cities);
 	Population d(Cities);
 	Path test = Path();
+	test = Cross_over(p.GetBestPath(), d.GetBestPath(), Cities);
 	for (int i = 0; i < 100; i++)
 	{
-		test = Cross_over(p.GetBestPath(), d.GetBestPath(), Cities);
+		Mutatation(test);
 	}
 	std::cout << "best generated path "<< p.GetBestPath().GetLength() << std::endl;
 	std::cout << "cross over best path " << test.GetLength() << std::endl;

@@ -4,6 +4,7 @@
 #include <ctime>    
 #include <array>
 #include <random>     
+#include <memory>
 #include <fstream>
 #include "math.h"
 #include "City.h"
@@ -71,7 +72,7 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& C
 			for (auto& neighbor : neighbors)
 			{
 				std::remove(neighbor.begin(), neighbor.end(), choosen);
-				neighbor.shrink_to_fit();
+				//neighbor.shrink_to_fit(); add ~ 20 ms and is not needed for some reasons ???
 			}
 			for (auto& city_id : neighbors.at(choosen))
 			{
@@ -102,7 +103,28 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& C
 	return child;
 }
 
-void Mutatation(const Path & PathA)
+void Mutatation(Path& PathA)
 {
+	unsigned i, j;
+	i = std::rand() % PATH_SIZE;
+	j = std::rand() % PATH_SIZE;
+	auto oldP = PathA.GetPath();
+	auto oldL = PathA.GetLength();
+	auto temp = PathA.GetPath();
+	std::swap(temp[i], temp[j]);
+	PathA.SetPath(temp);
+	PathA.SetLenght();
+	//std::cout << "new lenght : " << PathA.GetLength() << "\n";
+	if (PathA.GetLength() > oldL )
+	{
+		PathA.SetPath(oldP);
+		PathA.SetLenght();
+		//std::cout << " Bad one , go back to " << PathA.GetLength() << "\n";
+	}
+	else
+	{
+		//std::cout << " good path , keep it " <<"\n";
+	}
 	
+
 }

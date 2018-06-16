@@ -34,6 +34,7 @@ Path::Path(const std::vector<City>& cities)
 
 const void Path::SetLenght()   
 {
+	m_Length = 0;
 	unsigned int next_city_ID = 0;
 	float Distance_To_Next_City = 0;
 	for (unsigned int i = 0; i<PATH_SIZE - 1; i++)
@@ -46,13 +47,17 @@ const void Path::SetLenght()
 	Distance_To_Next_City = m_Path.at(PATH_SIZE - 1).GetDistanceTo(next_city_ID);
 	m_Length += Distance_To_Next_City;
 }
+const void Path::SetPath(std::vector<City>& Cities) 
+{
+	m_Path = Cities;
+}
 
 const float Path::GetLength() const
 {
 	return m_Length;
 }
 
-const std::vector<City> Path::GetPath() const
+std::vector<City> Path::GetPath() const
 {
 	return m_Path;
 }
