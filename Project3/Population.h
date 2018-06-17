@@ -14,6 +14,9 @@ public:
 	
 	Population();
 	Population(const std::vector<City>& cities);
-	const Path GetBestPath() const;
+	const std::vector<Path> GetSortedPaths() const;
+	const Path GetSortedPathAt(unsigned index) const;
+	void AppendPath(Path t_path);
+	
 	
 };

@@ -103,7 +103,7 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& C
 	return child;
 }
 
-void Mutatation(Path& PathA)
+void Mutatation(Path& PathA) // prototype implementation , very bad design !
 {
 	unsigned i, j;
 	i = std::rand() % PATH_SIZE;
@@ -113,18 +113,41 @@ void Mutatation(Path& PathA)
 	auto temp = PathA.GetPath();
 	std::swap(temp[i], temp[j]);
 	PathA.SetPath(temp);
-	PathA.SetLenght();
-	//std::cout << "new lenght : " << PathA.GetLength() << "\n";
 	if (PathA.GetLength() > oldL )
 	{
 		PathA.SetPath(oldP);
-		PathA.SetLenght();
-		//std::cout << " Bad one , go back to " << PathA.GetLength() << "\n";
 	}
-	else
-	{
-		//std::cout << " good path , keep it " <<"\n";
-	}
-	
+}
 
+Path Survivor(const Population& pop)
+{
+	std::vector<Path> PathList = pop.GetSortedPaths();
+	Population fighters = Population();
+	for (int i = 0; i < TOURNEMENT_SIZE; i++)
+	{
+		int randIndex = std::rand() % POP_SIZE;
+		fighters.AppendPath(PathList[randIndex]);
+	}
+	return fighters.GetSortedPathAt(0);
+}
+Population Evolve_Population(const Population& pop , const std::vector<City>& Cities)
+{
+	Population evolved_pop = Population();
+	evolved_pop.AppendPath(pop.GetSortedPathAt(0)); // take the best path of the last gen
+	for (int i = 1; i < POP_SIZE; i++)
+	{
+		Path selected = Survivor(pop);
+		if (unsigned do_cross = std::rand() % 100 < CROSSOVER_RATE)
+		{
+			Path temp1 = Survivor(pop);
+			Path temp2 = Survivor(pop);
+			selected = Cross_over(temp1, temp2, Cities);
+		}
+		if (unsigned do_cross = std::rand() % 100 < MUTATION_RATE)
+		{
+			Mutatation(selected);
+		}
+		evolved_pop.AppendPath(selected);
+	}
+	return evolved_pop;
 }

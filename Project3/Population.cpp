@@ -3,6 +3,7 @@
 #include "Path.h"
 #include "Defs.h"
 
+
 Population::Population(const std::vector<City>& cities)
 
 {
@@ -21,12 +22,20 @@ Population::Population(const std::vector<City>& cities)
 }
 
 
-const Path Population::GetBestPath() const
+const std::vector<Path> Population::GetSortedPaths() const
 {
-	
-	return m_BestPath;
+	return m_Paths;
 }
 
+const Path Population::GetSortedPathAt(unsigned index) const
+{
+	return m_Paths.at(index);
+}
+
+void Population::AppendPath(Path t_path) 
+{
+	m_Paths.emplace_back(t_path);
+}
 
 Population::Population()
 	: m_BestPath(Path())

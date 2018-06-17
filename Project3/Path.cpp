@@ -50,6 +50,7 @@ const void Path::SetLenght()
 const void Path::SetPath(std::vector<City>& Cities) 
 {
 	m_Path = Cities;
+	this->SetLenght();
 }
 
 const float Path::GetLength() const

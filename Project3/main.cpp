@@ -37,12 +37,17 @@ int main()
 	Population p(Cities);
 	Population d(Cities);
 	Path test = Path();
-	test = Cross_over(p.GetBestPath(), d.GetBestPath(), Cities);
+	test = Cross_over(p.GetSortedPathAt(0), d.GetSortedPathAt(0), Cities);
 	for (int i = 0; i < 100; i++)
 	{
 		Mutatation(test);
 	}
-	std::cout << "best generated path "<< p.GetBestPath().GetLength() << std::endl;
+	for (int j = 0 ; j < GEN_NUMBER; j++)
+	{
+		p = Evolve_Population(p, Cities);
+		std::cout << "best generated path for gen : "<< j << p.GetSortedPathAt(0).GetLength() << "\n";
+	}
+	
 	std::cout << "cross over best path " << test.GetLength() << std::endl;
 	auto stop = high_resolution_clock::now();
 	auto duration = duration_cast<milliseconds>(stop - start);
