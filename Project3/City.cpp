@@ -49,10 +49,6 @@ const void City::updateDistances(const std::vector<City>& cities)
 	}
 }
 
-const bool City::operator==(const City& other) const
-{
-	return this->m_Id == other.m_Id;
-}
 
 void CitiesFromFile(std::ifstream& FTP, std::vector<City>& Out_Cities)
 {
@@ -83,4 +79,9 @@ void setDistances(std::vector<City>& cities)
 	{
 		cities.at(i).updateDistances(cities);
 	}
+}
+
+bool operator==(const City& left, const City& right) 
+{
+	return left.GetID() == right.GetID();
 }

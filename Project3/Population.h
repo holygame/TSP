@@ -9,14 +9,15 @@ class Population
 {
 private:
 	std::vector<Path>				m_Paths;
-	Path							m_BestPath;
 public:
 	
 	Population();
 	Population(const std::vector<City>& cities);
+	Population(const Population& other);
 	const std::vector<Path> GetSortedPaths() const;
 	const Path GetSortedPathAt(unsigned index) const;
 	void AppendPath(Path t_path);
+	void SortPaths();
 	
 	
 };

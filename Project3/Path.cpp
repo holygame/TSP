@@ -82,3 +82,24 @@ const void Path::SetCityAt(unsigned index, const City& city)
 }
 
 
+
+std::ostream& operator<<(std::ostream& out , const Path& t_path)
+{
+	out << "|-";
+	for (int i = 0; i < PATH_SIZE; i++)
+	{
+		out << t_path.GetPath().at(i).GetID() << "-";
+	}
+	out << "|\n";
+	out << "path size " << t_path.GetPath().size() << std::endl; 
+	std::vector<City> temp1 = t_path.GetPath();
+	std::sort(temp1.begin(), temp1.end(), [](const City& a, const City& b)
+	{
+		return a.GetID() < b.GetID();
+	});
+	for (int i = 0; i < PATH_SIZE; i++)
+	{
+		out << temp1.at(i).GetID() << "-";
+	}
+	return out;
+}

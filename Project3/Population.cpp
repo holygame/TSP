@@ -18,7 +18,7 @@ Population::Population(const std::vector<City>& cities)
 	{
 		return a.GetLength() < b.GetLength();
 	});
-	m_BestPath = m_Paths.at(0);
+	
 }
 
 
@@ -38,7 +38,19 @@ void Population::AppendPath(Path t_path)
 }
 
 Population::Population()
-	: m_BestPath(Path())
 {
 	m_Paths.reserve(POP_SIZE);
+}
+
+Population::Population(const Population& other)
+{
+	m_Paths = other.GetSortedPaths();
+}
+
+void Population::SortPaths()
+{
+	std::sort(m_Paths.begin(), m_Paths.end(), [](const Path& a, const Path& b)
+	{
+		return a.GetLength() < b.GetLength();
+	});
 }

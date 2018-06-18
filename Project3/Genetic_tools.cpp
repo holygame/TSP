@@ -18,28 +18,28 @@
 #include "Genetic_tools.h"
 
 
-void Fill_Vector(std::vector<std::vector<int>>& neighbors, unsigned center, unsigned left, unsigned right)
+void Fill_Vector(std::vector<std::vector<int>>& neighborList, unsigned center, unsigned left, unsigned right)
 {
-	(neighbors.at(center)).emplace_back(right);
-	(neighbors.at(center)).emplace_back(left);
+	(neighborList.at(center)).emplace_back(right);
+	(neighborList.at(center)).emplace_back(left);
 }
 
 Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
 {
-	std::vector<std::vector<int>> neighbors(PATH_SIZE);
-	neighbors.reserve(PATH_SIZE);
+	std::vector<std::vector<int>> neighborList(PATH_SIZE);
+	neighborList.reserve(PATH_SIZE);
 	for (unsigned r = 0; r < PATH_SIZE; r++)
 	{
-	(neighbors.at(r)).reserve(4);
+	(neighborList.at(r)).reserve(4); // each city has a maximum of 4 neighor
 	}
-	unsigned a_current_city = PathA.Get_IDCity_at(0);
+	unsigned a_current_city = PathA.Get_IDCity_at(0); // out of range if uncluded in the for loop ( first city is alsoneighbor with the last city)
 	unsigned b_current_city = PathB.Get_IDCity_at(0);
 	unsigned a_current_right_city = PathA.Get_IDCity_at(1);
 	unsigned a_current_left_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
 	unsigned b_current_right_city = PathB.Get_IDCity_at(1);
 	unsigned b_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 1);
-	Fill_Vector(neighbors, a_current_city, a_current_left_city, a_current_right_city);
-	Fill_Vector(neighbors, b_current_city, b_current_left_city, b_current_right_city);
+	Fill_Vector(neighborList, a_current_city, a_current_left_city, a_current_right_city);
+	Fill_Vector(neighborList, b_current_city, b_current_left_city, b_current_right_city);
 
 	for (unsigned i = 1; i < PATH_SIZE - 1; i++)
 	{
@@ -49,8 +49,8 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& C
 		a_current_left_city = PathA.Get_IDCity_at(i - 1);
 		b_current_right_city = PathB.Get_IDCity_at(i + 1);
 		b_current_left_city = PathB.Get_IDCity_at(i - 1);
-		Fill_Vector(neighbors, a_current_city, a_current_left_city, a_current_right_city);
-		Fill_Vector(neighbors, b_current_city, b_current_left_city, b_current_right_city);
+		Fill_Vector(neighborList, a_current_city, a_current_left_city, a_current_right_city);
+		Fill_Vector(neighborList, b_current_city, b_current_left_city, b_current_right_city);
 	}
 	a_current_city = PathA.Get_IDCity_at(PATH_SIZE - 1);
 	b_current_city = PathB.Get_IDCity_at(PATH_SIZE - 1);
@@ -58,47 +58,50 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& C
 	a_current_left_city = PathA.Get_IDCity_at(PATH_SIZE - 2);
 	b_current_right_city = PathB.Get_IDCity_at(0);
 	b_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 2);
-	Fill_Vector(neighbors, a_current_city, a_current_left_city, a_current_right_city);
-	Fill_Vector(neighbors, b_current_city, b_current_left_city, b_current_right_city);
+	Fill_Vector(neighborList, a_current_city, a_current_left_city, a_current_right_city);
+	Fill_Vector(neighborList, b_current_city, b_current_left_city, b_current_right_city);
 	unsigned int choosen = std::rand() % PATH_SIZE;
-	unsigned min;
+	unsigned min=5;
+	unsigned size = 5;
+	std::vector<City> childSetter;
 	Path child = Path();
+	childSetter.resize(PATH_SIZE);
 	for (int x = 0; x < PATH_SIZE; x++)
 	{
 		min = 5;
-		child.SetCityAt(x, Cities.at(choosen));
+		childSetter.at(x) = Cities.at(choosen);
 		for (int j = 0; j < PATH_SIZE; j++)
 		{
-			for (auto& neighbor : neighbors)
+			for (std::vector<int>& neighbor : neighborList)
 			{
-				std::remove(neighbor.begin(), neighbor.end(), choosen);
-				//neighbor.shrink_to_fit(); add ~ 20 ms and is not needed for some reasons ???
+				neighbor.erase(std::remove(neighbor.begin(), neighbor.end(), choosen), neighbor.end());
+				neighbor.shrink_to_fit(); // resize automaticly after removing 
 			}
-			for (auto& city_id : neighbors.at(choosen))
+			for (const unsigned city_id : neighborList.at(choosen))
 			{
-				if (int size = neighbors.at(city_id).size() <= min)
+				if (size = neighborList.at(city_id).size() <= min)
 				{
 					min = size;
 					choosen = city_id;
 				}
 			}
-			if (neighbors.at(choosen).empty() == true)
+			if (neighborList.at(choosen).size() == 0)
 			{
 				for (int p = 0; p < PATH_SIZE; p++)
 				{
 					min = 5;
-					for (auto& city_id : neighbors.at(p))
-					{
-						if (std::find(child.GetPath().begin(), child.GetPath().end(), Cities.at(city_id)) == child.GetPath().end())
+						if (std::find(childSetter.begin(), childSetter.end(), Cities.at(p))
+							== childSetter.end())
 						{
-							choosen = city_id;
-							min = neighbors.at(city_id).size();
+							choosen = p;
+							min = neighborList.at(p).size();
 						}
-					}
+					
 				}
 			}
 		}
 	}
+	child.SetPath(childSetter);
 	child.SetLenght();
 	return child;
 }
@@ -113,6 +116,7 @@ void Mutatation(Path& PathA) // prototype implementation , very bad design !
 	auto temp = PathA.GetPath();
 	std::swap(temp[i], temp[j]);
 	PathA.SetPath(temp);
+
 	if (PathA.GetLength() > oldL )
 	{
 		PathA.SetPath(oldP);
@@ -128,26 +132,37 @@ Path Survivor(const Population& pop)
 		int randIndex = std::rand() % POP_SIZE;
 		fighters.AppendPath(PathList[randIndex]);
 	}
+	fighters.GetSortedPaths();
 	return fighters.GetSortedPathAt(0);
 }
-Population Evolve_Population(const Population& pop , const std::vector<City>& Cities)
+void Evolve_Population(Population& pop , const std::vector<City>& Cities , unsigned &n)
 {
-	Population evolved_pop = Population();
-	evolved_pop.AppendPath(pop.GetSortedPathAt(0)); // take the best path of the last gen
-	for (int i = 1; i < POP_SIZE; i++)
+	if ( n != 0 )
 	{
-		Path selected = Survivor(pop);
-		if (unsigned do_cross = std::rand() % 100 < CROSSOVER_RATE)
+		Path selected = Path();
+		Path temp1 = Path();
+		Path temp2 = Path();
+		Population evolved_pop = Population();
+		evolved_pop.AppendPath(pop.GetSortedPathAt(0)); // take the best path of the last gen
+		for (int i = 1; i < POP_SIZE; i++)
 		{
-			Path temp1 = Survivor(pop);
-			Path temp2 = Survivor(pop);
-			selected = Cross_over(temp1, temp2, Cities);
+			selected = Survivor(pop);
+			if (unsigned do_cross = std::rand() % 100 < CROSSOVER_RATE)
+			{
+				temp1 = Survivor(pop);
+				temp2 = Survivor(pop);
+				if ( temp1.GetLength() != temp2.GetLength())
+					selected = Cross_over(temp1, temp2, Cities);
+			}
+			if (unsigned do_mute = std::rand() % 100 < MUTATION_RATE)
+			{
+				Mutatation(selected);
+			}
+			evolved_pop.AppendPath(selected);
 		}
-		if (unsigned do_cross = std::rand() % 100 < MUTATION_RATE)
-		{
-			Mutatation(selected);
-		}
-		evolved_pop.AppendPath(selected);
+		evolved_pop.SortPaths();
+		n--;
+		std::cout << "gen " << GEN_NUMBER - n << " best path " << evolved_pop.GetSortedPathAt(0).GetLength() << " \n";
+		return Evolve_Population(evolved_pop, Cities , n );
 	}
-	return evolved_pop;
 }

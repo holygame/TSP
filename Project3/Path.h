@@ -19,6 +19,6 @@ public:
 	const void SetPath(std::vector<City>& Cities);
 	const unsigned int Get_IDCity_at(int index) const ;
 	const void SetCityAt(unsigned index, const City& city);
-	
 };
 
+std::ostream& operator<<(std::ostream& out, const Path& t_path);

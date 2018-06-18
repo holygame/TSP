@@ -26,8 +26,8 @@ public:
 	const unsigned int GetID() const;
 	const float GetDistanceTo(unsigned int index) const;
 	const void updateDistances(const std::vector<City> &cities);
-	const bool operator==(const City& other) const;
+	
 };
-
+bool operator==(const City& left, const City& right);
 void setDistances(std::vector<City>& cities);
 void CitiesFromFile(std::ifstream& FTP, std::vector<City>& Out_Cities);
