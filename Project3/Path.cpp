@@ -47,7 +47,7 @@ const void Path::SetLenght()
 	Distance_To_Next_City = m_Path.at(PATH_SIZE - 1).GetDistanceTo(next_city_ID);
 	m_Length += Distance_To_Next_City;
 }
-const void Path::SetPath(std::vector<City>& Cities) 
+const void Path::SetPath(std::vector<City> Cities) 
 {
 	m_Path = Cities;
 	this->SetLenght();
@@ -97,9 +97,12 @@ std::ostream& operator<<(std::ostream& out , const Path& t_path)
 	{
 		return a.GetID() < b.GetID();
 	});
+	out << " \nSORTED PATHS |-";
 	for (int i = 0; i < PATH_SIZE; i++)
 	{
 		out << temp1.at(i).GetID() << "-";
 	}
+	out << "|\n";
+
 	return out;
 }

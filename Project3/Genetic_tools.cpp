@@ -24,7 +24,7 @@ void Fill_Vector(std::vector<std::vector<int>>& neighborList, unsigned center, u
 	(neighborList.at(center)).emplace_back(left);
 }
 
-Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
+std::vector<City> Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
 {
 	std::vector<std::vector<int>> neighborList(PATH_SIZE);
 	neighborList.reserve(PATH_SIZE);
@@ -89,21 +89,19 @@ Path Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& C
 			{
 				for (int p = 0; p < PATH_SIZE; p++)
 				{
-					min = 5;
+					    min = 5;
 						if (std::find(childSetter.begin(), childSetter.end(), Cities.at(p))
 							== childSetter.end())
 						{
 							choosen = p;
 							min = neighborList.at(p).size();
+							break;
 						}
-					
 				}
 			}
 		}
 	}
-	child.SetPath(childSetter);
-	child.SetLenght();
-	return child;
+	return childSetter;
 }
 
 void Mutatation(Path& PathA) // prototype implementation , very bad design !
@@ -152,7 +150,7 @@ void Evolve_Population(Population& pop , const std::vector<City>& Cities , unsig
 				temp1 = Survivor(pop);
 				temp2 = Survivor(pop);
 				if ( temp1.GetLength() != temp2.GetLength())
-					selected = Cross_over(temp1, temp2, Cities);
+					selected.SetPath(Cross_over(temp1, temp2, Cities));
 			}
 			if (unsigned do_mute = std::rand() % 100 < MUTATION_RATE)
 			{
@@ -162,7 +160,7 @@ void Evolve_Population(Population& pop , const std::vector<City>& Cities , unsig
 		}
 		evolved_pop.SortPaths();
 		n--;
-		std::cout << "gen " << GEN_NUMBER - n << " best path " << evolved_pop.GetSortedPathAt(0).GetLength() << " \n";
+		std::cout << " gen " << GEN_NUMBER - n << " best path " << evolved_pop.GetSortedPathAt(0).GetLength() << " \n";
 		return Evolve_Population(evolved_pop, Cities , n );
 	}
 }

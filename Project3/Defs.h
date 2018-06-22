@@ -1,9 +1,9 @@
 #pragma once
 
 
-#define POP_SIZE 100
+#define POP_SIZE 50
 #define PATH_SIZE 51
-#define GEN_NUMBER 50
-#define CROSSOVER_RATE 70
+#define GEN_NUMBER 30
+#define CROSSOVER_RATE 100
 #define MUTATION_RATE 50
-#define TOURNEMENT_SIZE 5
+#define TOURNEMENT_SIZE 7
