@@ -63,9 +63,8 @@ std::vector<City> Cross_over(const Path& PathA, const Path& PathB, const std::ve
 	unsigned int choosen = std::rand() % PATH_SIZE;
 	unsigned min=5;
 	unsigned size = 5;
-	std::vector<City> childSetter;
+	std::vector<City> childSetter(PATH_SIZE , City(100,0,0));
 	Path child = Path();
-	childSetter.resize(PATH_SIZE);
 	for (int x = 0; x < PATH_SIZE; x++)
 	{
 		min = 5;
