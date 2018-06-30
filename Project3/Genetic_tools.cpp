@@ -24,13 +24,13 @@ void Fill_Vector(std::vector<std::vector<int>>& neighborList, unsigned center, u
 	(neighborList.at(center)).emplace_back(left);
 }
 
-std::vector<City> Cross_over(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
+std::vector<std::vector<int>> Get_NeighborList(const Path& PathA , const Path& PathB)
 {
 	std::vector<std::vector<int>> neighborList(PATH_SIZE);
 	neighborList.reserve(PATH_SIZE);
 	for (unsigned r = 0; r < PATH_SIZE; r++)
 	{
-	(neighborList.at(r)).reserve(4); // each city has a maximum of 4 neighor
+		(neighborList.at(r)).reserve(4); // each city has a maximum of 4 neighor
 	}
 	unsigned a_current_city = PathA.Get_IDCity_at(0); // out of range if uncluded in the for loop ( first city is alsoneighbor with the last city)
 	unsigned b_current_city = PathB.Get_IDCity_at(0);
@@ -60,6 +60,13 @@ std::vector<City> Cross_over(const Path& PathA, const Path& PathB, const std::ve
 	b_current_left_city = PathB.Get_IDCity_at(PATH_SIZE - 2);
 	Fill_Vector(neighborList, a_current_city, a_current_left_city, a_current_right_city);
 	Fill_Vector(neighborList, b_current_city, b_current_left_city, b_current_right_city);
+	return neighborList;
+}
+
+std::vector<City> Cross_over_ERX(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
+{
+	
+	auto neighborList = Get_NeighborList(PathA, PathB);
 	unsigned int choosen = std::rand() % PATH_SIZE;
 	unsigned min=5;
 	unsigned size = 5;
@@ -132,6 +139,51 @@ Path Survivor(const Population& pop)
 	fighters.GetSortedPaths();
 	return fighters.GetSortedPathAt(0);
 }
+
+std::vector<City> Cross_over_IGX(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
+{
+	std::vector<City> childSetter;
+	auto neighborList = Get_NeighborList(PathA, PathB);
+	float Distance = 100000000.0f;
+	for (int go = 0; go < PATH_SIZE; go++)
+	{
+		unsigned found = 0;
+		unsigned choosen = 1; // we choose 1 by default to reduce cost time of randomly generating a starting point
+		childSetter.reserve(PATH_SIZE);
+		childSetter.emplace_back(Cities.at(choosen));
+		Distance = 100000000.0f;
+		for (unsigned City_id : neighborList.at(choosen))
+		{
+			
+			if (float temp = Cities.at(choosen).GetDistanceTo(City_id) < Distance &&
+				std::find(childSetter.begin(), childSetter.end(), Cities.at(City_id))
+				== childSetter.end())
+			{
+				Distance = temp;
+				choosen = City_id;
+				found = 1;
+			}
+		}
+		if (found)
+		{
+			childSetter.emplace_back(Cities.at(choosen));
+		}
+		else if (found == 0)
+		{
+			for (int i = 1; i <= PATH_SIZE; i++)
+			{
+				if (std::find(childSetter.begin(), childSetter.end(), Cities.at(i))
+					== childSetter.end())
+				{
+					childSetter.emplace_back(Cities.at(i));
+					break;
+				}
+			}
+		}
+	}
+	return childSetter;
+}
+
 void Evolve_Population(Population& pop , const std::vector<City>& Cities , unsigned &n)
 {
 	if ( n != 0 )
@@ -149,7 +201,7 @@ void Evolve_Population(Population& pop , const std::vector<City>& Cities , unsig
 				temp1 = Survivor(pop);
 				temp2 = Survivor(pop);
 				if ( temp1.GetLength() != temp2.GetLength())
-					selected.SetPath(Cross_over(temp1, temp2, Cities));
+					selected.SetPath(Cross_over_IGX(temp1, temp2, Cities));
 			}
 			if (unsigned do_mute = std::rand() % 100 < MUTATION_RATE)
 			{
