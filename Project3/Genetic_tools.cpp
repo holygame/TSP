@@ -143,15 +143,16 @@ Path Survivor(const Population& pop)
 std::vector<City> Cross_over_IGX(const Path& PathA, const Path& PathB, const std::vector<City>& Cities)
 {
 	std::vector<City> childSetter;
+	childSetter.reserve(PATH_SIZE);
 	auto neighborList = Get_NeighborList(PathA, PathB);
-	float Distance = 100000000.0f;
-	for (int go = 0; go < PATH_SIZE; go++)
+	float Distance = 1000.0f;
+	unsigned choosen = 1;
+	childSetter.emplace_back(Cities.at(choosen));
+	for (int go = 0; go < PATH_SIZE - 1 ; go++)
 	{
 		unsigned found = 0;
-		unsigned choosen = 1; // we choose 1 by default to reduce cost time of randomly generating a starting point
-		childSetter.reserve(PATH_SIZE);
-		childSetter.emplace_back(Cities.at(choosen));
-		Distance = 100000000.0f;
+		 // we choose 1 by default to reduce cost time of randomly generating a starting poin
+		Distance = 1000.0f;
 		for (unsigned City_id : neighborList.at(choosen))
 		{
 			
@@ -168,9 +169,9 @@ std::vector<City> Cross_over_IGX(const Path& PathA, const Path& PathB, const std
 		{
 			childSetter.emplace_back(Cities.at(choosen));
 		}
-		else if (found == 0)
+		else if (found == 0 && childSetter.size() != PATH_SIZE )
 		{
-			for (int i = 1; i <= PATH_SIZE; i++)
+			for (int i = 0; i < PATH_SIZE; i++)
 			{
 				if (std::find(childSetter.begin(), childSetter.end(), Cities.at(i))
 					== childSetter.end())
