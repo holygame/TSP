@@ -184,6 +184,41 @@ std::vector<City> Cross_over_IGX(const Path& PathA, const Path& PathB, const std
 	return childSetter;
 }
 
+/*
+ This Function serve the purpose of evolving a certain population by creating anaother superior one.
+ note that this code should be operational but is definitly not optimised yet 
+ */
+Population Evolve_Population(const Population& pop , const std::vector<City>& Cites , int n)
+{
+	
+	
+	Population evolvedPopulation = Population(); // Create a new population that can take up to POP_SIZE paths
+	Path bestPath = pop.GetSortedPathAt(0);
+	evolvedPopulation.AppendPath(bestPath) ;
+	for ( int i = 0 ; i< POP_SIZE ; ++i)
+	{
+		Path selected = Survivor(pop); 
+		if (unsigned do_cross = std::rand() % 100 < CROSSOVER_RATE)
+		{
+			Path temp1 =Survivor(pop); 
+			Path temp2 = Survivor(pop;
+			selected.SetPath(Cross_over_IGX(temp1,temp2, Cities));
+		}
+		if (unsigned do_mute = std::rand() % 100 < MUTATION_RATE)
+		{
+				Mutatation(selected);
+		}
+		evolvedPopulation.AppendPath(selected);
+	}
+	evolvedPopulation.SortPaths();
+	return evolvedPopulation;
+	
+}
+
+/*
+ This Function serve the purpose of evolving a certain population whithout creating another one.
+ it's causing me bugs for now 
+ */
 void Evolve_Population(Population& pop , const std::vector<City>& Cities , unsigned &n)
 {
 	if ( n != 0 )

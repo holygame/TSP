@@ -55,7 +55,12 @@ int main()
 		unsigned n = GEN_NUMBER;
 		Population p(Cities);
 		std::cout << " starting length " << p.GetSortedPathAt(0).GetLength() << std::endl;
-		Evolve_Population(p, Cities, n);
+		//Evolve_Population(p, Cities, n);
+		for (int i=0;i<GEN_NUMBER;++i)
+		{
+			Population evolvedPopulation = Evolve_Population(p,Cities);
+			std::cout << "THE GENERATION "<< i << " BEST PATH HAS A LENGTH OF " << evolvedPopulation.GetSortedPathAt(0).GetLength() << std::endl;
+		}
 	}
 	std::cin.get();
 	

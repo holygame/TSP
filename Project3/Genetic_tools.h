@@ -9,4 +9,5 @@ std::vector<City> Cross_over_ERX(const Path& PathA, const Path& PathB, const std
 std::vector<City> Cross_over_IGX(const Path& PathA, const Path& PathB, const std::vector<City>& Cities);
 void Fill_Vector(std::vector<std::vector<int>>& neighbors, unsigned center, unsigned left, unsigned right);
 void Evolve_Population(Population& pop, const std::vector<City>& Cities, unsigned  &n);
+Population Evolve_Population(const Population& pop , const std::vector<City>& Cites );
 Path Survivor(const Population& pop);
